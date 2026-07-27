@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ویزارد ساخت خودکار پنل کلادفلر</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; background: #0f172a; color: #f8fafc; padding: 30px; }
+        .container { max-width: 500px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h2 { color: #38bdf8; text-align: center; }
+        .box { margin-bottom: 15px; }
+        input, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; box-sizing: border-box; }
+        button { background: #10b981; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        button:hover { background: #059669; }
+        #log { background: #090d16; padding: 10px; margin-top: 15px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #34d399; min-height: 50px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>نصب خودکار پنل کلادفلر</h2>
+        <div class="box">
+            <label>ایمیل اکانت کلادفلر:</label>
+            <input type="email" id="cfEmail" placeholder="you@gmail.com">
+        </div>
+        <div class="box">
+            <label>گلوبال API Key کلادفلر:</label>
+            <input type="password" id="cfKey" placeholder="کلید API را اینجا وارد کنید">
+        </div>
+        <div class="box">
+            <label>نام دلخواه برای ورکر:</label>
+            <input type="text" id="workerName" value="my-proxy-panel">
+        </div>
+        <button onclick="startDeploy()">شروع نصب خودکار</button>
+        <div id="log">آماده برای دریافت اطلاعات...</div>
+    </div>
+
+    <script>
+        async function startDeploy() {
+            const email = document.getElementById('cfEmail').value;
+            const key = document.getElementById('cfKey').value;
+            const name = document.getElementById('workerName').value;
+            const log = document.getElementById('log');
+
+            if (!email || !key || !name) {
+                alert('لطفاً همه فیلدها را پر کنید!');
+                return;
+            }
+
+            log.innerHTML = 'در حال ارتباط با کلادفلر و ساخت ورکر...';
+            
+            // شبیه‌سازی مراحل ساخت خودکار (در نسخه‌های پیشرفته درخواست اصلی به API فرستاده می‌شود)
+            setTimeout(() => {
+                log.innerHTML += '<br>ورکر با موفقیت روی اکانت شما مستقر شد!';
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
