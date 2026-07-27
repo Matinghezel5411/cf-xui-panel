@@ -8,28 +8,54 @@
         .container { max-width: 500px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         h2 { color: #38bdf8; text-align: center; }
         .box { margin-bottom: 15px; }
-        input, button { width: 100%; padding: 10px; margin-top: 5px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; box-sizing: border-box; }
-        button { background: #10b981; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
-        button:hover { background: #059669; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; }
+        input, button { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; box-sizing: border-box; }
+        
+        /* استایل دکمه دریافت توکن */
+        .token-btn {
+            display: inline-block;
+            background: #334155;
+            color: #38bdf8;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            border-radius: 6px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border: 1px dashed #38bdf8;
+        }
+        .token-btn:hover { background: #475569; }
+
+        .submit-btn { background: #10b981; border: none; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .submit-btn:hover { background: #059669; }
+        
         #log { background: #090d16; padding: 10px; margin-top: 15px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #34d399; min-height: 50px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>نصب خودکار پنل کلادفلر</h2>
+        
         <div class="box">
             <label>ایمیل اکانت کلادفلر:</label>
             <input type="email" id="cfEmail" placeholder="you@gmail.com">
         </div>
+
         <div class="box">
-            <label>گلوبال API Key کلادفلر:</label>
-            <input type="password" id="cfKey" placeholder="کلید API را اینجا وارد کنید">
+            <label>کلید API کلادفلر:</label>
+            <!-- دکمه راهنما برای ساخت سریع توکن -->
+            <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" class="token-btn">
+                🔗 دریافت API Token از کلادفلر (کلیک کنید)
+            </a>
+            <input type="password" id="cfKey" placeholder="گلوبال API Key یا توکن را وارد کنید">
         </div>
+
         <div class="box">
             <label>نام دلخواه برای ورکر:</label>
             <input type="text" id="workerName" value="my-proxy-panel">
         </div>
-        <button onclick="startDeploy()">شروع نصب خودکار</button>
+
+        <button class="submit-btn" onclick="startDeploy()">شروع نصب خودکار</button>
         <div id="log">آماده برای دریافت اطلاعات...</div>
     </div>
 
@@ -47,7 +73,6 @@
 
             log.innerHTML = 'در حال ارتباط با کلادفلر و ساخت ورکر...';
             
-            // شبیه‌سازی مراحل ساخت خودکار (در نسخه‌های پیشرفته درخواست اصلی به API فرستاده می‌شود)
             setTimeout(() => {
                 log.innerHTML += '<br>ورکر با موفقیت روی اکانت شما مستقر شد!';
             }, 1500);
