@@ -11,7 +11,6 @@
         label { display: block; margin-bottom: 5px; font-size: 14px; color: #cbd5e1; }
         input, button { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #fff; box-sizing: border-box; }
         
-        /* استایل دکمه دریافت توکن */
         .token-btn {
             display: inline-block;
             background: #334155;
@@ -45,7 +44,6 @@
 
         <div class="box">
             <label>کلید API یا توکن کلادفلر:</label>
-            <!-- دکمه مستقیم ساخت توکن با دسترسی کامل در کلادفلر -->
             <a href="https://dash.cloudflare.com/profile/api-tokens/new?template-id=d41d8cd98f00b204e9800998ecf8427e" target="_blank" class="token-btn">
                 🔗 ساخت توکن با دسترسی کامل در کلادفلر (کلیک کنید)
             </a>
@@ -65,7 +63,7 @@
         async function startDeploy() {
             const email = document.getElementById('cfEmail').value;
             const key = document.getElementById('cfKey').value;
-            const name = document.getElementById('workerName').value;
+            const name = document.getElementById('workerName').value.trim();
             const log = document.getElementById('log');
 
             if (!email || !key || !name) {
@@ -73,12 +71,59 @@
                 return;
             }
 
-            log.innerHTML = 'در حال ارتباط با کلادفلر و ساخت ورکر...';
-            
-            // شبیه‌سازی فرآیند استقرار خودکار
-            setTimeout(() => {
-                log.innerHTML += '<br>ورکر با موفقیت روی اکانت شما مستقر شد!';
-            }, 1500);
+            log.innerHTML = 'در حال دریافت اطلاعات حساب از کلادفلر...';
+
+            try {
+                // ۱. ابتدا باید Account ID کاربر را بگیریم
+                const accResponse = await fetch('https://api.cloudflare.com/client/v4/accounts', {
+                    headers: {
+                        'X-Auth-Email': email,
+                        'X-Auth-Key': key,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const accData = await accResponse.json();
+                if (!accData.success || accData.result.length === 0) {
+                    throw new Error('خطا در احراز هویت! ایمیل یا توکن اشتباه است.');
+                }
+
+                const accountId = accData.result[0].id;
+                log.innerHTML += '<br>شناسه حساب یافت شد. در حال استقرار ورکر...';
+
+                // ۲. کدهایی که قرار است روی ورکر کاربر مستقر شود
+                const workerScript = `
+                    export default {
+                        async fetch(request, env, ctx) {
+                            return new Response("Cloudflare X-UI Panel is Running Successfully!", {
+                                headers: { "Content-Type": "text/plain;charset=UTF-8" }
+                            });
+                        }
+                    };
+                `;
+
+                // ۳. ارسال درخواست ساخت ورکر به API کلادفلر
+                const deployResponse = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/workers/scripts/${name}`, {
+                    method: 'PUT',
+                    headers: {
+                        'X-Auth-Email': email,
+                        'X-Auth-Key': key,
+                        'Content-Type': 'application/javascript'
+                    },
+                    body: workerScript
+                });
+
+                const deployData = await deployResponse.json();
+
+                if (deployData.success) {
+                    log.innerHTML += `<br><span style="color: #6ee7b7;">موفقیت‌آمیز! ورکر با نام ${name} روی اکانت شما ساخته شد.</span>`;
+                } else {
+                    throw new Error(deployData.errors[0]?.message || 'خطا در ساخت ورکر');
+                }
+
+            } catch (error) {
+                log.innerHTML += `<br><span style="color: #f87171;">خطا: ${error.message}</span>`;
+            }
         }
     </script>
 </body>
